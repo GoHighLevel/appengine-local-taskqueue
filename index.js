@@ -40,7 +40,7 @@ app.delete('/:task_id', (req, res) => {
 			console.log(`Deleted job id => ${req.params.task_id}`);
 			return res.status(200).json({});
 		}
-		res.status(500).json({});
+		res.status(200).json({});
 	});
 });
 
