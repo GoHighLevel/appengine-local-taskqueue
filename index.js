@@ -48,7 +48,7 @@ queue.process('taskqueue', function(job, done) {
 	console.log(`Executing ${job.id}`);
 	const appEngineHttpRequest = job.data.task.appEngineHttpRequest;
 	const queueName = job.data.parent.queueName;
-	const headers = { 'x-appengine-queuename': queueName };
+	const headers = { 'x-appengine-queuename': queueName, 'x-appengine-taskname': job.id.toString() };
 	const options = { baseUrl: appEngineHttpRequest.baseUrl, method: appEngineHttpRequest.httpMethod };
 	if (appEngineHttpRequest.payload) {
 		options.body = Buffer.from(appEngineHttpRequest.payload, 'base64').toString('utf-8');
