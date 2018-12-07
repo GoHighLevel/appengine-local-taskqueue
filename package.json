@@ -1,0 +1,22 @@
+{
+	"name": "local-queue",
+	"version": "1.0.0",
+	"description": "Local queue that simulates an appengine task queue",
+	"main": "index.js",
+	"repository": "git@github.com:procedurallygenerated/appengine-local-taskqueue.git",
+	"author": "procedurallygenerated",
+	"license": "MIT",
+	"private": false,
+	"scripts": {
+		"start": "concurrently --kill-others \"node_modules/kue/bin/kue-dashboard\" \"nodemon nodemon index.js\""
+	},
+	"dependencies": {
+		"body-parser": "^1.18.3",
+		"concurrently": "^4.1.0",
+		"express": "^4.16.4",
+		"got": "^9.3.2",
+		"kue": "^0.11.6",
+		"kue-ui-express": "^1.1.1",
+		"nodemon": "^1.18.7"
+	}
+}
