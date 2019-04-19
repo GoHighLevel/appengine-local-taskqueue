@@ -50,8 +50,8 @@ queue.process('taskqueue', function(job, done) {
 	const queueName = job.data.parent.queueName;
 	const headers = { 'x-appengine-queuename': queueName, 'x-appengine-taskname': job.id.toString() };
 	const options = { baseUrl: appEngineHttpRequest.baseUrl, method: appEngineHttpRequest.httpMethod };
-	if (appEngineHttpRequest.payload) {
-		options.body = Buffer.from(appEngineHttpRequest.payload, 'base64').toString('utf-8');
+	if (appEngineHttpRequest.body) {
+		options.body = Buffer.from(appEngineHttpRequest.body, 'base64').toString('utf-8');
 		headers['Content-Type'] = 'application/octet-stream';
 	}
 	options.headers = headers;

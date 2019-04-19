@@ -55,8 +55,8 @@ queue.process('taskqueue', function(job, done) {
 		headers['Content-Type'] = 'application/octet-stream';
 	}
 	options.headers = headers;
-	console.log(appEngineHttpRequest.relativeUrl, options);
-	got(appEngineHttpRequest.relativeUrl, options)
+	console.log(appEngineHttpRequest.relativeUri, options);
+	got(appEngineHttpRequest.relativeUri, options)
 		.then(() => {
 			done();
 		})
