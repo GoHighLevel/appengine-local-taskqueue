@@ -73,7 +73,7 @@ process.once('SIGTERM', function(sig) {
 });
 
 queue.on('error', function(err) {
-	console.errir(err);
+	console.error(err);
 });
 
 app.listen(port, () => console.log(`Queue listening on port ${port}!`));
