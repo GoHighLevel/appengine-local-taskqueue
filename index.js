@@ -6,12 +6,12 @@ const kueUiExpress = require('kue-ui-express');
 const app = express();
 
 const queue = kue.createQueue();
-
 const port = 9090;
 
 app.use(bodyParser.json());
 kueUiExpress(app, '/kue/', '/kue-api');
 app.use('/kue-api/', kue.app);
+
 app.post('/', (req, res) => {
 	var data = req.body;
 	console.log(req.body);
@@ -46,16 +46,19 @@ app.delete('/:task_id', (req, res) => {
 
 queue.process('taskqueue', function(job, done) {
 	console.log(`Executing ${job.id}`);
+	console.log(job.data, 'job.data')
 	const appEngineHttpRequest = job.data.task.appEngineHttpRequest;
 	const queueName = job.data.parent.queueName;
 	const headers = { 'x-appengine-queuename': queueName, 'x-appengine-taskname': job.id.toString() };
-	const options = { baseUrl: appEngineHttpRequest.baseUrl, method: appEngineHttpRequest.httpMethod };
+	const options = { baseUrl: "http://localhost:5020", method: appEngineHttpRequest?.httpMethod || 'POST' };
 	if (appEngineHttpRequest.body) {
 		options.body = Buffer.from(appEngineHttpRequest.body, 'base64').toString('utf-8');
 		headers['Content-Type'] = 'application/octet-stream';
 	}
 	options.headers = headers;
+	console.log("relative url", appEngineHttpRequest.relativeUri, options);
 	console.log(appEngineHttpRequest.relativeUri, options);
+
 	got(appEngineHttpRequest.relativeUri, options)
 		.then(() => {
 			done();
