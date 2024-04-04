@@ -14,7 +14,7 @@ app.use('/kue-api/', kue.app);
 
 app.post('/', (req, res) => {
 	var data = req.body;
-	console.log(req.body);
+	console.log('\nreq.body => ', req.body);
 	var seconds = 0;
 	if (data.task.scheduleTime.seconds) {
 		var currentTime = Math.floor(new Date().getTime() / 1000);
