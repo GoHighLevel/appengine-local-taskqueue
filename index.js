@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const got = require('got');
 const kueUiExpress = require('kue-ui-express');
 const app = express();
+const chalk = require('chalk');
 
 const queue = kue.createQueue();
 const port = 9090;
@@ -14,7 +15,7 @@ app.use('/kue-api/', kue.app);
 
 app.post('/', (req, res) => {
 	var data = req.body;
-	console.log('\nreq.body => ', req.body);
+	console.log(chalk.yellow('\nreq.body =>'), req.body);
 	var seconds = 0;
 	if (data.task.scheduleTime.seconds) {
 		var currentTime = Math.floor(new Date().getTime() / 1000);
@@ -23,12 +24,12 @@ app.post('/', (req, res) => {
 
 	var job = queue.create('taskqueue', data);
 	if (seconds > 0) {
-		console.log(`\nDelay by ${seconds}s`);
+		console.log(chalk.cyan(`\nDelay by ${seconds}s`));
 		job.delay(seconds * 1000);
 	}
 	job.save(function(err) {
 		if (!err) {
-			console.log(`\nQueued job with id => ${job.id}`);
+			console.log(chalk.cyanBright(`\nQueued job with id => ${job.id}`));
 			return res.status(200).json({ id: job.id });
 		}
 		return res.status(500).json({});
@@ -38,7 +39,7 @@ app.post('/', (req, res) => {
 app.delete('/:task_id', (req, res) => {
 	kue.Job.remove(req.params.task_id, (err) => {
 		if (!err) {
-			console.log(`\nDeleted job id => ${req.params.task_id}`);
+			console.log(chalk.cyanBright(`\nDeleted job id => ${req.params.task_id}`));
 			return res.status(200).json({});
 		}
 		res.status(200).json({});
@@ -46,8 +47,8 @@ app.delete('/:task_id', (req, res) => {
 });
 
 queue.process('taskqueue', function(job, done) {
-	console.log(`\nExecuting job => ${job.id}`);
-	console.log('\njob.data', job.data)
+	console.log(chalk.cyanBright(`\nExecuting job => ${job.id}`));
+	console.log(chalk.yellow('\njob.data =>'), job.data)
 	const appEngineHttpRequest = job.data.task.appEngineHttpRequest;
 	const queueName = job.data.parent.queueName;
 	const headers = { 'x-appengine-queuename': queueName, 'x-appengine-taskname': job.id.toString() };
@@ -61,7 +62,7 @@ queue.process('taskqueue', function(job, done) {
 		headers['Content-Type'] = 'application/octet-stream';
 	}
 	options.headers = headers;
-	console.log('\nExecuting => ', appEngineHttpRequest.relativeUri, options);
+	console.log(chalk.yellow('\nExecuting =>'), appEngineHttpRequest.relativeUri, options);
 
 	got(appEngineHttpRequest.relativeUri, options)
 		.then(() => {
