@@ -23,21 +23,22 @@ app.post('/', (req, res) => {
 
 	var job = queue.create('taskqueue', data);
 	if (seconds > 0) {
-		console.log(`Delay by ${seconds}s`);
+		console.log(`\nDelay by ${seconds}s`);
 		job.delay(seconds * 1000);
 	}
 	job.save(function(err) {
 		if (!err) {
-			console.log(`Queued job with id => ${job.id}`);
+			console.log(`\nQueued job with id => ${job.id}`);
 			return res.status(200).json({ id: job.id });
 		}
 		return res.status(500).json({});
 	});
 });
+
 app.delete('/:task_id', (req, res) => {
 	kue.Job.remove(req.params.task_id, (err) => {
 		if (!err) {
-			console.log(`Deleted job id => ${req.params.task_id}`);
+			console.log(`\nDeleted job id => ${req.params.task_id}`);
 			return res.status(200).json({});
 		}
 		res.status(200).json({});
@@ -45,19 +46,22 @@ app.delete('/:task_id', (req, res) => {
 });
 
 queue.process('taskqueue', function(job, done) {
-	console.log(`Executing ${job.id}`);
-	console.log(job.data, 'job.data')
+	console.log(`\nExecuting job => ${job.id}`);
+	console.log('\njob.data', job.data)
 	const appEngineHttpRequest = job.data.task.appEngineHttpRequest;
 	const queueName = job.data.parent.queueName;
 	const headers = { 'x-appengine-queuename': queueName, 'x-appengine-taskname': job.id.toString() };
 	const options = { baseUrl: "http://localhost:5020", method: appEngineHttpRequest?.httpMethod || 'POST' };
+	if(!appEngineHttpRequest.relativeUri) {
+		return done(new Error('relativeUri is required'));
+	}
+
 	if (appEngineHttpRequest.body) {
 		options.body = Buffer.from(appEngineHttpRequest.body, 'base64').toString('utf-8');
 		headers['Content-Type'] = 'application/octet-stream';
 	}
 	options.headers = headers;
-	console.log("relative url", appEngineHttpRequest.relativeUri, options);
-	console.log(appEngineHttpRequest.relativeUri, options);
+	console.log('\nExecuting => ', appEngineHttpRequest.relativeUri, options);
 
 	got(appEngineHttpRequest.relativeUri, options)
 		.then(() => {
