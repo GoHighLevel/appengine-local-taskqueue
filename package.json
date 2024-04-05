@@ -11,13 +11,13 @@
 		"start": "concurrently --kill-others \"node_modules/kue/bin/kue-dashboard\" \"nodemon nodemon index.js\""
 	},
 	"dependencies": {
-		"body-parser": "^1.20.2",
+		"body-parser": "^1.18.3",
 		"chalk": "^4.1.2",
-		"concurrently": "^4.1.2",
-		"express": "^4.19.2",
-		"got": "^11.8.6",
+		"concurrently": "^4.1.0",
+		"express": "^4.16.4",
+		"got": "^9.3.2",
 		"kue": "^0.11.6",
 		"kue-ui-express": "^1.1.1",
-		"nodemon": "^1.19.4"
+		"nodemon": "^1.18.7"
 	}
 }
